@@ -27,7 +27,9 @@ public class Mountain {
     public Auxdata getAuxdata() { return auxdata;}
 
     @Override
-    public String toString() { return name + " located at " + location + " at " + size + " meters high. ";}
+    public String toString() { return name;}
+    /*    public String toString() { return name + " located at " + location + " at " + size + " meters high. ";}
+     */
 
 }
 
