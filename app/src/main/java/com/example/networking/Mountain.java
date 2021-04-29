@@ -12,5 +12,22 @@ public class Mountain {
     private int cost;
     private Auxdata auxdata;
 
+   /* public Mountain(String name, String location, int cost, Auxdata auxdata) {
+        this.name = name;
+        this.location = location;
+        this.cost = cost;
+        this.auxdata = auxdata;}*/
+
+    public String getName() { return name;}
+
+    public String getLocation() { return location;}
+
+    public int getSize() { return size;}
+
+    public Auxdata getAuxdata() { return auxdata;}
+
+    @Override
+    public String toString() { return name + " located at " + location + " at " + size + " meters high. ";}
 
 }
+
