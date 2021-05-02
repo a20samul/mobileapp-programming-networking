@@ -15,7 +15,7 @@ public class Mountain {
    /* public Mountain(String name, String location, int cost, Auxdata auxdata) {
         this.name = name;
         this.location = location;
-        this.cost = cost;
+        this.size = size;
         this.auxdata = auxdata;}*/
 
     public String getName() { return name;}

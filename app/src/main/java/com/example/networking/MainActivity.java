@@ -36,20 +36,20 @@ public class MainActivity extends AppCompatActivity {
         new JsonTask().execute("https://wwwlab.iit.his.se/brom/kurser/mobilprog/dbservice/admin/getdataasjson.php?type=brom");
 
         items = new ArrayList<>();
-        adapter = new ArrayAdapter(this, R.layout.listview_item, items);
+       // adapter = new ArrayAdapter(this, R.layout.listview_item, items);
+        adapter = new ArrayAdapter<Mountain>(MainActivity.this,R.layout.listview_item, R.id.item, items);
 
         ListView listView = findViewById(R.id.list_view);
         listView.setAdapter(adapter);
         listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-               /*
-               Mountain mountain = items.get(i);
 
-               String message = "The mountain " + mountain.getName(); +
-                        "is located in " + mountain.getLocation();
-                        "and is " + mountain.getSize(); + " meters high. ";
-                Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show(); */
+               Mountain mountain = items.get(position);
+
+               String message = "The mountain " +  mountain.getName() + " is located in " +
+                       mountain.getLocation() + "and has a height of(metres) " + mountain.getSize();
+                Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();
             }
         });
 
@@ -101,17 +101,22 @@ private class JsonTask extends AsyncTask<String, String, String> {
 
     @Override
     protected void onPostExecute(String json) {
-        Log.d("AsyncTask", json);
-        Gson gson = new Gson();
-        ListView listView = findViewById(R.id.list_view);
-        mountains = gson.fromJson(json, Mountain[].class);
-        adapter = new ArrayAdapter<Mountain>(MainActivity.this,R.layout.listview_item, R.id.item,mountains);
-        listView.setAdapter(adapter);
+        try {
+            Log.d("AsyncTask", json);
+            Gson gson = new Gson();
+            Mountain[] mountains = gson.fromJson(json, Mountain[].class);
+            adapter.clear();
 
-        for (int i = 0; i < mountains.length; i++) {
-            Log.d("MainActivity ==>", "Hittade ett berg: "+mountains[i]);
+            for (int i = 0; i < mountains.length; i++) {
+                Log.d("MainActivity ==>", "Hittade ett berg: " + mountains[i]);
+                adapter.add(mountains[i]);
+            }
+            adapter.notifyDataSetChanged();
+        } catch (Exception e) {
+            Log.e("MainActivity ==>", "Something went wrong.");
         }
+
+
     }
 }
-
 }
