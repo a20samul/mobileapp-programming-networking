@@ -147,5 +147,5 @@ i samband med meddelandet i String message som uppvisades i form av en toast med
 
 ![Screenshot of completed app with toast message showing information about the mountain K2](networking.png)
 
-*Bild 1: Uppvisar den färdigställda applikationen med ett toast meddelande angående information om K2*
+*Bild 1: Uppvisar den färdigställda applikationen med ett toast meddelande angående information om K2.*
 
