@@ -48,7 +48,7 @@ public class MainActivity extends AppCompatActivity {
                Mountain mountain = items.get(position);
 
                String message = "The mountain " +  mountain.getName() + " is located in " +
-                       mountain.getLocation() + "and has a height of(metres) " + mountain.getSize();
+                       mountain.getLocation() + " and has a height of " + mountain.getSize() + " metres ";
                 Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();
             }
         });

@@ -1,42 +1,144 @@
 
 # Rapport
+*1. Added ListView to layout*
+ListView tillades genom layout --> activity_main tillsammans med en ny resource file namngiven
+listview_item med rotelement TextView. Bäggedera angavs ett id för att möjliggöra tillkallning av
+dessa vid komplett framställning av en listview.
 
-**Skriv din rapport här!**
+Inuti activity_main:
+```
+    <ListView
+        android:id="@+id/list_view"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        />
+```
 
-_Du kan ta bort all text som finns sedan tidigare_.
+Inuti listview_item.xml:
+```
+<TextView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/item"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:text="Text"
+    android:textSize="18sp" />
+```
 
-## Följande grundsyn gäller dugga-svar:
+Internet permissio tillades i AndroidManifest.xml för att kunna hämta datan från webservicen.
+```
+   <uses-permission android:name="android.permission.INTERNET" />
+```
 
-- Ett kortfattat svar är att föredra. Svar som är längre än en sida text (skärmdumpar och programkod exkluderat) är onödigt långt.
-- Svaret skall ha minst en snutt programkod.
-- Svaret skall inkludera en kort övergripande förklarande text som redogör för vad respektive snutt programkod gör eller som svarar på annan teorifråga.
-- Svaret skall ha minst en skärmdump. Skärmdumpar skall illustrera exekvering av relevant programkod. Eventuell text i skärmdumpar måste vara läsbar.
-- I de fall detta efterfrågas, dela upp delar av ditt svar i för- och nackdelar. Dina för- respektive nackdelar skall vara i form av punktlistor med kortare stycken (3-4 meningar).
-
-Programkod ska se ut som exemplet nedan. Koden måste vara korrekt indenterad då den blir lättare att läsa vilket gör det lättare att hitta syntaktiska fel.
+*2. Added ArrayList<Mountain> as a member variable in activity*
+En deklaration av ArrayList kallad för <Mountain> items; skapades för att kunna inkorporera den genom
+ tilldelning i adaptern för att kunna använda dess innehåll i toast meddelandet.
 
 ```
-function errorCallback(error) {
-    switch(error.code) {
-        case error.PERMISSION_DENIED:
-            // Geolocation API stöds inte, gör något
-            break;
-        case error.POSITION_UNAVAILABLE:
-            // Misslyckat positionsanrop, gör något
-            break;
-        case error.UNKNOWN_ERROR:
-            // Okänt fel, gör något
-            break;
-    }
-}
+    private ArrayList<Mountain> items;
 ```
+Adapter tillades för att kunna läsa in datan från webservicen och visa upp den i ListView.
+ListView kallades genom nedanstående kod där det angavs att adaptern på denna screen: MainActivity, skulle
+layouten listview_items uppvisas inuti TextView med id item med innehållet från arraylistan items.
+
+Deklaraktion av adapter:
+```
+    private ArrayAdapter<Mountain> adapter;
+```
+Tilldelning av adapter:
+```
+adapter = new ArrayAdapter<Mountain>(MainActivity.this,R.layout.listview_item, R.id.item, items);
+```
+
+För att kunna skapa en toast i senare skede skapades private member variables identiska mot JSON datan.
+Detta genomfördes genom att skapa en java class för Mountain. Däri tillades nedanstående kod.
+toString ersattes med 'get...()' som uppspelades i toast meddelandet.
+```
+public class Mountain {
+
+    private String ID;
+    private String name;
+    private String type;
+    private String company;
+    private String location;
+    private String category;
+    private int size;
+    private int cost;
+    private Auxdata auxdata;
+
+
+    public String getName() { return name;}
+
+    public String getLocation() { return location;}
+
+    public int getSize() { return size;}
+
+    public Auxdata getAuxdata() { return auxdata;}
+
+    @Override
+    public String toString() { return name;}
+```
+
+*3. Use 'JsonTask' to fetch data from our json web service*
+Bergslistan hämtades genom att ange dess URL och genom användning av JsonTask.
+```
+        new JsonTask().execute("https://wwwlab.iit.his.se/brom/kurser/mobilprog/dbservice/admin/getdataasjson.php?type=brom");
+```
+
+*4. Add items to your list of mountains by parsing the json data*
+
+I onPostExecute skapades ett nytt gson objekt instans för att tolka strängen med den skapade klassen
+genom Mountain[] mountains = gson.fromJson(json, Mountain[].class);.
+Genom 'add' tillades alla bergen en efter en. Därefter kördes adapter.notifyDataSetChange för att
+informera adaptern om förändringar som skett i listan av datan. På detta vis uppdaterades adaptern
+med den nya datan.
+
+
+```
+   @Override
+    protected void onPostExecute(String json) {
+        try {
+            Log.d("AsyncTask", json);
+            Gson gson = new Gson();
+            Mountain[] mountains = gson.fromJson(json, Mountain[].class);
+            adapter.clear();
+            for (int i = 0; i < mountains.length; i++) {
+                Log.d("MainActivity ==>", "Hittade ett berg: " + mountains[i]);
+                adapter.add(mountains[i]);
+            }
+            adapter.notifyDataSetChanged();
+        } catch (Exception e) {
+            Log.e("MainActivity ==>", "Something went wrong.");
+        }
+    ```
+
+
+*5. Added Mountain name and 2 other properties as a Toast View*
+Genom onCLickItemListner hämtades motsvarande item genom Mountain mountain = items.get(position);
+i samband med meddelandet med String message som uppvisades med toast.
+
+```
+        ListView listView = findViewById(R.id.list_view);
+        listView.setAdapter(adapter);
+        listView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+
+               Mountain mountain = items.get(position);
+
+               String message = "The mountain " +  mountain.getName() + " is located in " +
+                       mountain.getLocation() + " and has a height of " + mountain.getSize() + " metres ";
+                Toast.makeText(MainActivity.this, message, Toast.LENGTH_LONG).show();
+            }
+        });
+```
+
 
 Bilder läggs i samma mapp som markdown-filen.
 
-![](android.png)
+![Screenshot of completed app with toast message showing information about the mountain K2](networking.png)
+_Bild 1: Uppvisar den färdigställda applikationen med ett toast meddelande angående information om K2._
 
-Läs gärna:
-
-- Boulos, M.N.K., Warren, J., Gong, J. & Yue, P. (2010) Web GIS in practice VIII: HTML5 and the canvas element for interactive online mapping. International journal of health geographics 9, 14. Shin, Y. &
-- Wunsche, B.C. (2013) A smartphone-based golf simulation exercise game for supporting arthritis patients. 2013 28th International Conference of Image and Vision Computing New Zealand (IVCNZ), IEEE, pp. 459–464.
-- Wohlin, C., Runeson, P., Höst, M., Ohlsson, M.C., Regnell, B., Wesslén, A. (2012) Experimentation in Software Engineering, Berlin, Heidelberg: Springer Berlin Heidelberg.
