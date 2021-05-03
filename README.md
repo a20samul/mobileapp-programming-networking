@@ -1,6 +1,7 @@
 
 # Rapport
-*1. Added ListView to layout*
+**1. Added ListView to layout**:
+
 ListView tillades genom layout --> activity_main tillsammans med en ny resource file namngiven
 listview_item med rotelement TextView. Bäggedera angavs ett id för att möjliggöra tillkallning av
 dessa vid komplett framställning av en listview.
@@ -28,14 +29,16 @@ Inuti listview_item.xml:
     android:textSize="18sp" />
 ```
 
-Internet permissio tillades i AndroidManifest.xml för att kunna hämta datan från webservicen.
+Tillåtelse till nternet tillades i AndroidManifest.xml för att kunna hämta datan från webservicen.
 ```
    <uses-permission android:name="android.permission.INTERNET" />
 ```
 
-*2. Added ArrayList<Mountain> as a member variable in activity*
+
+**2. Added ArrayList<Mountain> as a member variable in activity**:
+
 En deklaration av ArrayList kallad för <Mountain> items; skapades för att kunna inkorporera den genom
- tilldelning i adaptern för att kunna använda dess innehåll i toast meddelandet.
+ tilldelning i adaptern för att kunna använda dess innehåll.
 
 ```
     private ArrayList<Mountain> items;
@@ -54,7 +57,8 @@ adapter = new ArrayAdapter<Mountain>(MainActivity.this,R.layout.listview_item, R
 ```
 
 För att kunna skapa en toast i senare skede skapades private member variables identiska mot JSON datan.
-Detta genomfördes genom att skapa en java class för Mountain. Däri tillades nedanstående kod.
+Detta genomfördes genom att skapa en java class för Mountain. Däri tillades nedanstående kod där private
+String användes för textstränger medan int för numeriska värden.
 toString ersattes med 'get...()' som uppspelades i toast meddelandet.
 ```
 public class Mountain {
@@ -82,13 +86,16 @@ public class Mountain {
     public String toString() { return name;}
 ```
 
-*3. Use 'JsonTask' to fetch data from our json web service*
+
+**3. Use 'JsonTask' to fetch data from our json web service**:
+
 Bergslistan hämtades genom att ange dess URL och genom användning av JsonTask.
 ```
         new JsonTask().execute("https://wwwlab.iit.his.se/brom/kurser/mobilprog/dbservice/admin/getdataasjson.php?type=brom");
 ```
 
-*4. Add items to your list of mountains by parsing the json data*
+
+**4. Add items to your list of mountains by parsing the json data**:
 
 I onPostExecute skapades ett nytt gson objekt instans för att tolka strängen med den skapade klassen
 genom Mountain[] mountains = gson.fromJson(json, Mountain[].class);.
@@ -113,12 +120,13 @@ med den nya datan.
         } catch (Exception e) {
             Log.e("MainActivity ==>", "Something went wrong.");
         }
-    ```
+```
 
 
-*5. Added Mountain name and 2 other properties as a Toast View*
+*5. Added Mountain name and 2 other properties as a Toast View*:
+
 Genom onCLickItemListner hämtades motsvarande item genom Mountain mountain = items.get(position);
-i samband med meddelandet med String message som uppvisades med toast.
+i samband med meddelandet i String message som uppvisades i form av en toast med hjälp av adapter.
 
 ```
         ListView listView = findViewById(R.id.list_view);
@@ -137,8 +145,7 @@ i samband med meddelandet med String message som uppvisades med toast.
 ```
 
 
-Bilder läggs i samma mapp som markdown-filen.
-
 ![Screenshot of completed app with toast message showing information about the mountain K2](networking.png)
-_Bild 1: Uppvisar den färdigställda applikationen med ett toast meddelande angående information om K2._
+
+*Bild 1: Uppvisar den färdigställda applikationen med ett toast meddelande angående information om K2*
 
